@@ -41,7 +41,6 @@
     min-width: 200px;
   }
 
-  /* Logo placeholder – reemplaza esta sección con tu <img> */
   .logo-placeholder {
     width: 130px;
     height: 130px;
@@ -70,7 +69,6 @@
     height: 130px;
     border-radius: 50%;
     object-fit: cover;
-    display: none;
     border: 2px solid #222;
   }
 
@@ -397,6 +395,113 @@
     margin-bottom: 8px;
     font-style: italic;
   }
+
+  /* ══════════════════════════════════════
+     RESPONSIVE STYLES
+  ══════════════════════════════════════ */
+
+  /* Tablet (≤768px) */
+  @media (max-width: 768px) {
+    body { padding: 16px; font-size: 12px; }
+
+    .page { padding: 24px 20px 24px; }
+
+    /* Header: stack vertically */
+    .header {
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .logo-area { min-width: unset; width: 100%; }
+
+    .invoice-info {
+      text-align: center;
+      width: 100%;
+    }
+
+    .invoice-info h1 { font-size: 18px; margin-bottom: 12px; }
+
+    .info-grid {
+      justify-content: center;
+      gap: 4px 12px;
+    }
+
+    .info-value { min-width: 130px; }
+
+    /* Parties: stack */
+    .parties {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    /* Table: make it scroll horizontally */
+    .table-wrapper {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin-bottom: 24px;
+    }
+
+    table {
+      min-width: 560px;
+      margin-bottom: 0;
+    }
+
+    /* Bottom section: stack */
+    .bottom-section {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    /* Footer: stack */
+    .footer {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .footer-contacts {
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .brand-name { font-size: 22px; }
+
+    .logo-preview,
+    .logo-placeholder { width: 100px; height: 100px; }
+  }
+
+  /* Mobile (≤480px) */
+  @media (max-width: 480px) {
+    body { padding: 10px; }
+    .page { padding: 18px 14px; }
+
+    .invoice-info h1 { font-size: 16px; }
+
+    .info-grid {
+      grid-template-columns: 1fr;
+      gap: 2px;
+      text-align: left;
+    }
+
+    .info-label { text-align: left; color: #888; font-size: 10px; }
+    .info-value { min-width: unset; font-size: 12px; }
+
+    .brand-name { font-size: 20px; }
+    .brand-tagline { font-size: 8.5px; letter-spacing: 1.5px; }
+
+    table { min-width: 480px; font-size: 11px; }
+
+    thead th { padding: 8px 6px; font-size: 9.5px; }
+    tbody td { padding: 7px 6px; }
+
+    .totals-box .total-row:last-child { font-size: 13px; }
+
+    .footer-contacts { flex-direction: column; align-items: flex-start; gap: 8px; }
+
+    .print-btn { font-size: 11px; padding: 10px 20px; }
+  }
 </style>
 </head>
 <body>
@@ -410,7 +515,9 @@
 
     <!-- Logo -->
     <div class="logo-area">
-      <div class="logo-placeholder" id="logoPlaceholder" title="Haz clic para subir tu logo">
+      <img id="logoPreview" class="logo-preview" src="Logo.png" alt="Logo iPrestige"
+           onerror="this.style.display='none'; document.getElementById('logoPlaceholder').style.display='flex';">
+      <div class="logo-placeholder" id="logoPlaceholder" title="Haz clic para subir tu logo" style="display:none;">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="1.5">
           <rect x="3" y="3" width="18" height="18" rx="2"/>
           <circle cx="8.5" cy="8.5" r="1.5"/>
@@ -419,7 +526,6 @@
         <span>Subir logo</span>
         <input type="file" accept="image/*" onchange="loadLogo(event)">
       </div>
-      <img id="logoPreview" class="logo-preview" src="" alt="Logo">
 
       <div class="brand-name">i<span>Prestige</span></div>
       <div class="brand-tagline" contenteditable="true">iPhones Premium, Experiencia Excepcional.</div>
@@ -483,75 +589,77 @@
   </div>
 
   <!-- ══ TABLE ══ -->
-  <table id="invoiceTable">
-    <thead>
-      <tr>
-        <th>Cant.</th>
-        <th>Descripción</th>
-        <th>Modelo</th>
-        <th>Número de Serie</th>
-        <th>Precio Unitario</th>
-        <th>Importe</th>
-        <th style="background:#222; width:28px;"></th>
-      </tr>
-    </thead>
-    <tbody id="tableBody">
-      <tr>
-        <td contenteditable="true">10</td>
-        <td contenteditable="true">iPhone 15 Pro 128GB, Natural Titanium</td>
-        <td contenteditable="true">MTUX3LL/A</td>
-        <td contenteditable="true">V7D6Q1X9J2</td>
-        <td contenteditable="true" class="price-unit">$999.00 USD</td>
-        <td contenteditable="true" class="price-total">$9,990.00 USD</td>
-        <td><button class="delete-row" onclick="deleteRow(this)" title="Eliminar fila">×</button></td>
-      </tr>
-      <tr>
-        <td contenteditable="true">10</td>
-        <td contenteditable="true">iPhone 15 Pro Max 256GB, Blue Titanium</td>
-        <td contenteditable="true">MU6T3LL/A</td>
-        <td contenteditable="true">V2K7N3L5P1</td>
-        <td contenteditable="true" class="price-unit">$1,199.00 USD</td>
-        <td contenteditable="true" class="price-total">$11,990.00 USD</td>
-        <td><button class="delete-row" onclick="deleteRow(this)" title="Eliminar fila">×</button></td>
-      </tr>
-      <tr>
-        <td contenteditable="true">10</td>
-        <td contenteditable="true">iPhone 15 128GB, Midnight</td>
-        <td contenteditable="true">MTMK3LL/A</td>
-        <td contenteditable="true">C3L9R8D2H4</td>
-        <td contenteditable="true" class="price-unit">$699.00 USD</td>
-        <td contenteditable="true" class="price-total">$6,990.00 USD</td>
-        <td><button class="delete-row" onclick="deleteRow(this)" title="Eliminar fila">×</button></td>
-      </tr>
-      <tr>
-        <td contenteditable="true">10</td>
-        <td contenteditable="true">iPhone 15 Plus 256GB, Pink</td>
-        <td contenteditable="true">MU103LL/A</td>
-        <td contenteditable="true">G1H6J9K0M3</td>
-        <td contenteditable="true" class="price-unit">$899.00 USD</td>
-        <td contenteditable="true" class="price-total">$8,990.00 USD</td>
-        <td><button class="delete-row" onclick="deleteRow(this)" title="Eliminar fila">×</button></td>
-      </tr>
-      <tr>
-        <td contenteditable="true">20</td>
-        <td contenteditable="true">Cable de carga USB-C a USB-C (1 m)</td>
-        <td contenteditable="true">MUF72AM/A</td>
-        <td contenteditable="true">N/A</td>
-        <td contenteditable="true" class="price-unit">$19.00 USD</td>
-        <td contenteditable="true" class="price-total">$380.00 USD</td>
-        <td><button class="delete-row" onclick="deleteRow(this)" title="Eliminar fila">×</button></td>
-      </tr>
-      <tr>
-        <td contenteditable="true">10</td>
-        <td contenteditable="true">Adaptador de corriente USB-C 20W</td>
-        <td contenteditable="true">MHJE3AM/A</td>
-        <td contenteditable="true">N/A</td>
-        <td contenteditable="true" class="price-unit">$19.00 USD</td>
-        <td contenteditable="true" class="price-total">$190.00 USD</td>
-        <td><button class="delete-row" onclick="deleteRow(this)" title="Eliminar fila">×</button></td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="table-wrapper">
+    <table id="invoiceTable">
+      <thead>
+        <tr>
+          <th>Cant.</th>
+          <th>Descripción</th>
+          <th>Modelo</th>
+          <th>Número de Serie</th>
+          <th>Precio Unitario</th>
+          <th>Importe</th>
+          <th style="background:#222; width:28px;"></th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+        <tr>
+          <td contenteditable="true">10</td>
+          <td contenteditable="true">iPhone 15 Pro 128GB, Natural Titanium</td>
+          <td contenteditable="true">MTUX3LL/A</td>
+          <td contenteditable="true">V7D6Q1X9J2</td>
+          <td contenteditable="true" class="price-unit">$999.00 USD</td>
+          <td contenteditable="true" class="price-total">$9,990.00 USD</td>
+          <td><button class="delete-row" onclick="deleteRow(this)" title="Eliminar fila">×</button></td>
+        </tr>
+        <tr>
+          <td contenteditable="true">10</td>
+          <td contenteditable="true">iPhone 15 Pro Max 256GB, Blue Titanium</td>
+          <td contenteditable="true">MU6T3LL/A</td>
+          <td contenteditable="true">V2K7N3L5P1</td>
+          <td contenteditable="true" class="price-unit">$1,199.00 USD</td>
+          <td contenteditable="true" class="price-total">$11,990.00 USD</td>
+          <td><button class="delete-row" onclick="deleteRow(this)" title="Eliminar fila">×</button></td>
+        </tr>
+        <tr>
+          <td contenteditable="true">10</td>
+          <td contenteditable="true">iPhone 15 128GB, Midnight</td>
+          <td contenteditable="true">MTMK3LL/A</td>
+          <td contenteditable="true">C3L9R8D2H4</td>
+          <td contenteditable="true" class="price-unit">$699.00 USD</td>
+          <td contenteditable="true" class="price-total">$6,990.00 USD</td>
+          <td><button class="delete-row" onclick="deleteRow(this)" title="Eliminar fila">×</button></td>
+        </tr>
+        <tr>
+          <td contenteditable="true">10</td>
+          <td contenteditable="true">iPhone 15 Plus 256GB, Pink</td>
+          <td contenteditable="true">MU103LL/A</td>
+          <td contenteditable="true">G1H6J9K0M3</td>
+          <td contenteditable="true" class="price-unit">$899.00 USD</td>
+          <td contenteditable="true" class="price-total">$8,990.00 USD</td>
+          <td><button class="delete-row" onclick="deleteRow(this)" title="Eliminar fila">×</button></td>
+        </tr>
+        <tr>
+          <td contenteditable="true">20</td>
+          <td contenteditable="true">Cable de carga USB-C a USB-C (1 m)</td>
+          <td contenteditable="true">MUF72AM/A</td>
+          <td contenteditable="true">N/A</td>
+          <td contenteditable="true" class="price-unit">$19.00 USD</td>
+          <td contenteditable="true" class="price-total">$380.00 USD</td>
+          <td><button class="delete-row" onclick="deleteRow(this)" title="Eliminar fila">×</button></td>
+        </tr>
+        <tr>
+          <td contenteditable="true">10</td>
+          <td contenteditable="true">Adaptador de corriente USB-C 20W</td>
+          <td contenteditable="true">MHJE3AM/A</td>
+          <td contenteditable="true">N/A</td>
+          <td contenteditable="true" class="price-unit">$19.00 USD</td>
+          <td contenteditable="true" class="price-total">$190.00 USD</td>
+          <td><button class="delete-row" onclick="deleteRow(this)" title="Eliminar fila">×</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
   <button class="add-row-btn" onclick="addRow()">+ Agregar fila</button>
 
@@ -651,7 +759,6 @@
       <td><button class="delete-row" onclick="deleteRow(this)" title="Eliminar fila">×</button></td>
     `;
     tbody.appendChild(tr);
-    // focus description
     tr.querySelector('td:nth-child(2)').focus();
   }
 
