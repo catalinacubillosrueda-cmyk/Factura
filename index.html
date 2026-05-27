@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Factura de Compra – iPrestige</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Open Sans', sans-serif;
+    background: #f0f0f0;
+    padding: 30px;
+    color: #222;
+    font-size: 13px;
+  }
+
+  .page {
+    background: #fff;
+    max-width: 850px;
+    margin: 0 auto;
+    padding: 40px 45px 35px;
+    box-shadow: 0 4px 30px rgba(0,0,0,0.12);
+  }
+
+  /* ── HEADER ── */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 35px;
+    gap: 20px;
+  }
+
+  .logo-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    min-width: 200px;
+  }
+
+  /* Logo placeholder – reemplaza esta sección con tu <img> */
+  .logo-placeholder {
+    width: 130px;
+    height: 130px;
+    border: 2.5px dashed #aaa;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+    font-size: 11px;
+    text-align: center;
+    cursor: pointer;
+    background: #fafafa;
+    transition: border-color 0.2s, background 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .logo-placeholder:hover { border-color: #555; background: #f0f0f0; }
+  .logo-placeholder svg { margin-bottom: 4px; }
+  .logo-placeholder input[type="file"] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+  }
+  .logo-preview {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: none;
+    border: 2px solid #222;
+  }
+
+  .brand-name {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: #111;
+  }
+  .brand-name span { font-weight: 400; }
+
+  .brand-tagline {
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: #555;
+    border-top: 1px solid #bbb;
+    border-bottom: 1px solid #bbb;
+    padding: 3px 8px;
+    text-align: center;
+  }
+
+  .invoice-info {
+    text-align: right;
+    flex: 1;
+  }
+
+  .invoice-info h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #111;
+    margin-bottom: 16px;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 5px 16px;
+    justify-content: end;
+    align-items: center;
+  }
+
+  .info-label {
+    font-size: 12px;
+    color: #555;
+    text-align: right;
+  }
+
+  .info-value {
+    font-size: 12px;
+    font-weight: 600;
+    color: #111;
+    text-align: left;
+    min-width: 160px;
+  }
+
+  [contenteditable="true"] {
+    outline: none;
+    border-bottom: 1px dashed transparent;
+    transition: border-color 0.15s, background 0.15s;
+    border-radius: 2px;
+    padding: 0 2px;
+    cursor: text;
+  }
+  [contenteditable="true"]:hover { border-bottom-color: #aaa; }
+  [contenteditable="true"]:focus { border-bottom-color: #111; background: #f9f9f9; }
+
+  /* ── DIVIDER ── */
+  hr.section-divider {
+    border: none;
+    border-top: 1.5px solid #ddd;
+    margin: 20px 0;
+  }
+
+  /* ── TWO COLUMNS: PROVEEDOR + COMPRA ── */
+  .parties {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 24px;
+  }
+
+  .party-box h2 {
+    background: #111;
+    color: #fff;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 8px 14px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .party-box p {
+    font-size: 12.5px;
+    line-height: 1.9;
+    color: #222;
+    padding: 0 4px;
+  }
+
+  .party-box strong {
+    font-weight: 700;
+    font-size: 13px;
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  /* ── TABLE ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 24px;
+    font-size: 12px;
+  }
+
+  thead tr {
+    background: #111;
+    color: #fff;
+  }
+
+  thead th {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 10.5px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 10px 10px;
+    text-align: center;
+  }
+
+  thead th:nth-child(2) { text-align: left; }
+
+  tbody tr { border-bottom: 1px solid #e8e8e8; }
+  tbody tr:nth-child(even) { background: #f7f7f7; }
+  tbody tr:hover { background: #eef; }
+
+  tbody td {
+    padding: 9px 10px;
+    text-align: center;
+    color: #333;
+    vertical-align: middle;
+  }
+
+  tbody td:nth-child(2) { text-align: left; }
+  tbody td:nth-child(5), tbody td:nth-child(6) { font-weight: 600; }
+
+  .add-row-btn {
+    display: block;
+    margin: -16px auto 20px;
+    background: none;
+    border: 1.5px dashed #aaa;
+    color: #888;
+    font-size: 11px;
+    padding: 5px 20px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s;
+    font-family: 'Open Sans', sans-serif;
+  }
+  .add-row-btn:hover { border-color: #333; color: #333; background: #f5f5f5; }
+
+  .delete-row {
+    color: #c00;
+    cursor: pointer;
+    font-size: 14px;
+    border: none;
+    background: none;
+    padding: 0 4px;
+    line-height: 1;
+    opacity: 0.5;
+    transition: opacity 0.15s;
+  }
+  .delete-row:hover { opacity: 1; }
+
+  /* ── BOTTOM SECTION ── */
+  .bottom-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 28px;
+  }
+
+  .observations-box h3 {
+    background: #111;
+    color: #fff;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 8px 14px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .observations-box p {
+    font-size: 12.5px;
+    color: #444;
+    padding: 0 4px;
+    line-height: 1.7;
+  }
+
+  .totals-box {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .totals-box .total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 14px;
+    border-bottom: 1px solid #eee;
+    font-size: 12.5px;
+  }
+
+  .totals-box .total-row:last-child {
+    background: #111;
+    color: #fff;
+    border-bottom: none;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    padding: 12px 14px;
+  }
+
+  .total-row .total-label { color: inherit; }
+  .total-row .total-value { font-weight: 600; min-width: 130px; text-align: right; }
+  .total-row:last-child .total-value { color: #fff; font-weight: 800; }
+
+  /* ── FOOTER ── */
+  .footer {
+    border-top: 1.5px solid #ccc;
+    padding-top: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .footer-thanks {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 11.5px;
+    color: #444;
+  }
+
+  .footer-thanks .crown-icon {
+    width: 32px;
+    height: 32px;
+    border: 2px solid #222;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .footer-thanks p { line-height: 1.6; }
+  .footer-thanks strong { font-size: 12px; }
+
+  .footer-contacts {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    font-size: 11px;
+    color: #444;
+  }
+
+  .footer-contacts span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  /* ── PRINT ── */
+  @media print {
+    body { background: white; padding: 0; }
+    .page { box-shadow: none; padding: 20px 30px; }
+    .add-row-btn, .delete-row, .print-btn, .logo-placeholder input { display: none !important; }
+    [contenteditable="true"] { border-bottom-color: transparent !important; background: transparent !important; }
+  }
+
+  /* ── PRINT BUTTON ── */
+  .print-btn {
+    display: block;
+    margin: 20px auto 0;
+    background: #111;
+    color: #fff;
+    border: none;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-size: 12px;
+    padding: 12px 36px;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: background 0.2s;
+    max-width: 850px;
+    width: 100%;
+  }
+  .print-btn:hover { background: #333; }
+
+  .edit-hint {
+    text-align: center;
+    font-size: 11px;
+    color: #888;
+    margin-bottom: 8px;
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+
+<p class="edit-hint">✏️ Haz clic en cualquier texto para editarlo · Haz clic en el logo para cambiarlo · Usa el botón "+" para agregar filas</p>
+
+<div class="page">
+
+  <!-- ══ HEADER ══ -->
+  <div class="header">
+
+    <!-- Logo -->
+    <div class="logo-area">
+      <div class="logo-placeholder" id="logoPlaceholder" title="Haz clic para subir tu logo">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="1.5">
+          <rect x="3" y="3" width="18" height="18" rx="2"/>
+          <circle cx="8.5" cy="8.5" r="1.5"/>
+          <polyline points="21 15 16 10 5 21"/>
+        </svg>
+        <span>Subir logo</span>
+        <input type="file" accept="image/*" onchange="loadLogo(event)">
+      </div>
+      <img id="logoPreview" class="logo-preview" src="" alt="Logo">
+
+      <div class="brand-name">i<span>Prestige</span></div>
+      <div class="brand-tagline" contenteditable="true">iPhones Premium, Experiencia Excepcional.</div>
+    </div>
+
+    <!-- Invoice Info -->
+    <div class="invoice-info">
+      <h1>Factura de Compra</h1>
+      <div class="info-grid">
+        <span class="info-label">Número de factura:</span>
+        <span class="info-value" contenteditable="true">FC-2024-000156</span>
+
+        <span class="info-label">Fecha de emisión:</span>
+        <span class="info-value" contenteditable="true">25/05/2024</span>
+
+        <span class="info-label">Método de pago:</span>
+        <span class="info-value" contenteditable="true">Transferencia Bancaria</span>
+
+        <span class="info-label">Condiciones de pago:</span>
+        <span class="info-value" contenteditable="true">Contado</span>
+      </div>
+    </div>
+
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- ══ PARTIES ══ -->
+  <div class="parties">
+
+    <div class="party-box">
+      <h2>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        Datos del Proveedor
+      </h2>
+      <p>
+        <strong contenteditable="true">Apple Inc.</strong>
+        <span contenteditable="true">One Apple Park Way</span><br>
+        <span contenteditable="true">Cupertino, CA 95014</span><br>
+        <span contenteditable="true">Estados Unidos</span><br>
+        <span contenteditable="true">EIN: 94-2404110</span>
+      </p>
+    </div>
+
+    <div class="party-box">
+      <h2>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+        Datos de Compra
+      </h2>
+      <p>
+        <strong contenteditable="true">iPrestige Store S.A.S.</strong>
+        <span contenteditable="true">Av. Principal 123, Local 5</span><br>
+        <span contenteditable="true">Col. San Pedro, Monterrey, N.L.</span><br>
+        <span contenteditable="true">México, C.P. 66220</span><br>
+        <span contenteditable="true">RFC: IPS240525M12</span><br>
+        <span contenteditable="true">Teléfono: +52 81 1234 5678</span><br>
+        <span contenteditable="true">Correo: compras@iprestige.com</span>
+      </p>
+    </div>
+
+  </div>
+
+  <!-- ══ TABLE ══ -->
+  <table id="invoiceTable">
+    <thead>
+      <tr>
+        <th>Cant.</th>
+        <th>Descripción</th>
+        <th>Modelo</th>
+        <th>Número de Serie</th>
+        <th>Precio Unitario</th>
+        <th>Importe</th>
+        <th style="background:#222; width:28px;"></th>
+      </tr>
+    </thead>
+    <tbody id="tableBody">
+      <tr>
+        <td contenteditable="true">10</td>
+        <td contenteditable="true">iPhone 15 Pro 128GB, Natural Titanium</td>
+        <td contenteditable="true">MTUX3LL/A</td>
+        <td contenteditable="true">V7D6Q1X9J2</td>
+        <td contenteditable="true" class="price-unit">$999.00 USD</td>
+        <td contenteditable="true" class="price-total">$9,990.00 USD</td>
+        <td><button class="delete-row" onclick="deleteRow(this)" title="Eliminar fila">×</button></td>
+      </tr>
+      <tr>
+        <td contenteditable="true">10</td>
+        <td contenteditable="true">iPhone 15 Pro Max 256GB, Blue Titanium</td>
+        <td contenteditable="true">MU6T3LL/A</td>
+        <td contenteditable="true">V2K7N3L5P1</td>
+        <td contenteditable="true" class="price-unit">$1,199.00 USD</td>
+        <td contenteditable="true" class="price-total">$11,990.00 USD</td>
+        <td><button class="delete-row" onclick="deleteRow(this)" title="Eliminar fila">×</button></td>
+      </tr>
+      <tr>
+        <td contenteditable="true">10</td>
+        <td contenteditable="true">iPhone 15 128GB, Midnight</td>
+        <td contenteditable="true">MTMK3LL/A</td>
+        <td contenteditable="true">C3L9R8D2H4</td>
+        <td contenteditable="true" class="price-unit">$699.00 USD</td>
+        <td contenteditable="true" class="price-total">$6,990.00 USD</td>
+        <td><button class="delete-row" onclick="deleteRow(this)" title="Eliminar fila">×</button></td>
+      </tr>
+      <tr>
+        <td contenteditable="true">10</td>
+        <td contenteditable="true">iPhone 15 Plus 256GB, Pink</td>
+        <td contenteditable="true">MU103LL/A</td>
+        <td contenteditable="true">G1H6J9K0M3</td>
+        <td contenteditable="true" class="price-unit">$899.00 USD</td>
+        <td contenteditable="true" class="price-total">$8,990.00 USD</td>
+        <td><button class="delete-row" onclick="deleteRow(this)" title="Eliminar fila">×</button></td>
+      </tr>
+      <tr>
+        <td contenteditable="true">20</td>
+        <td contenteditable="true">Cable de carga USB-C a USB-C (1 m)</td>
+        <td contenteditable="true">MUF72AM/A</td>
+        <td contenteditable="true">N/A</td>
+        <td contenteditable="true" class="price-unit">$19.00 USD</td>
+        <td contenteditable="true" class="price-total">$380.00 USD</td>
+        <td><button class="delete-row" onclick="deleteRow(this)" title="Eliminar fila">×</button></td>
+      </tr>
+      <tr>
+        <td contenteditable="true">10</td>
+        <td contenteditable="true">Adaptador de corriente USB-C 20W</td>
+        <td contenteditable="true">MHJE3AM/A</td>
+        <td contenteditable="true">N/A</td>
+        <td contenteditable="true" class="price-unit">$19.00 USD</td>
+        <td contenteditable="true" class="price-total">$190.00 USD</td>
+        <td><button class="delete-row" onclick="deleteRow(this)" title="Eliminar fila">×</button></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <button class="add-row-btn" onclick="addRow()">+ Agregar fila</button>
+
+  <!-- ══ BOTTOM ══ -->
+  <div class="bottom-section">
+
+    <div class="observations-box">
+      <h3>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Observaciones
+      </h3>
+      <p contenteditable="true">Mercancía adquirida para reventa.</p>
+    </div>
+
+    <div class="totals-box">
+      <div class="total-row">
+        <span class="total-label">SUBTOTAL</span>
+        <span class="total-value" contenteditable="true">$28,530.00 USD</span>
+      </div>
+      <div class="total-row">
+        <span class="total-label">DESCUENTO</span>
+        <span class="total-value" contenteditable="true">$0.00 USD</span>
+      </div>
+      <div class="total-row">
+        <span class="total-label">IVA (0%)</span>
+        <span class="total-value" contenteditable="true">$0.00 USD</span>
+      </div>
+      <div class="total-row">
+        <span class="total-label">TOTAL</span>
+        <span class="total-value" contenteditable="true">$28,530.00 USD</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══ FOOTER ══ -->
+  <div class="footer">
+    <div class="footer-thanks">
+      <div class="crown-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#222" stroke-width="2">
+          <path d="M2 19l2-9 4 4 4-7 4 7 4-4 2 9H2z"/>
+        </svg>
+      </div>
+      <p>
+        <span contenteditable="true">Gracias por su confianza.</span><br>
+        <strong contenteditable="true">iPrestige – iPhones Premium, Experiencia Excepcional.</strong>
+      </p>
+    </div>
+
+    <div class="footer-contacts">
+      <span>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        <span contenteditable="true">www.iprestige.com</span>
+      </span>
+      <span>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="#555"/></svg>
+        <span contenteditable="true">@iprestige.store</span>
+      </span>
+      <span>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.49 12 19.79 19.79 0 0 1 1.4 3.4 2 2 0 0 1 3.37 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.4a16 16 0 0 0 6 6l.77-.77a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        <span contenteditable="true">+52 81 1234 5678</span>
+      </span>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<button class="print-btn" onclick="window.print()">🖨️ Imprimir / Guardar como PDF</button>
+
+<script>
+  // ── LOGO UPLOAD ──
+  function loadLogo(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const placeholder = document.getElementById('logoPlaceholder');
+      const preview = document.getElementById('logoPreview');
+      preview.src = e.target.result;
+      preview.style.display = 'block';
+      placeholder.style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // ── ADD ROW ──
+  function addRow() {
+    const tbody = document.getElementById('tableBody');
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td contenteditable="true">1</td>
+      <td contenteditable="true">Nueva descripción</td>
+      <td contenteditable="true">—</td>
+      <td contenteditable="true">N/A</td>
+      <td contenteditable="true" class="price-unit">$0.00 USD</td>
+      <td contenteditable="true" class="price-total">$0.00 USD</td>
+      <td><button class="delete-row" onclick="deleteRow(this)" title="Eliminar fila">×</button></td>
+    `;
+    tbody.appendChild(tr);
+    // focus description
+    tr.querySelector('td:nth-child(2)').focus();
+  }
+
+  // ── DELETE ROW ──
+  function deleteRow(btn) {
+    const tbody = document.getElementById('tableBody');
+    if (tbody.rows.length <= 1) { alert('Debe haber al menos una fila.'); return; }
+    btn.closest('tr').remove();
+  }
+</script>
+</body>
+</html>
